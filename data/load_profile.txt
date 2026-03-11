@@ -1,0 +1,6 @@
+# duration(s)  type        amps  label
+30             CHARGE      50    Off-peak charge
+30             DISCHARGE   30    Morning discharge
+10             DISCHARGE   110   Overcurrent spike
+30             IDLE        0     Recovery
+0              END         0     Done
