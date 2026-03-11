@@ -1,6 +1,17 @@
-# duration(s)  type        amps  label
-30             CHARGE      50    Off-peak charge
-30             DISCHARGE   30    Morning discharge
-10             DISCHARGE   110   Overcurrent spike
-30             IDLE        0     Recovery
-0              END         0     Done
+# Load Profile for BESS EMS Simulation
+#
+# Format: duration_seconds  COMMAND  amps  description
+#
+# duration_seconds: how long (real seconds) to hold this step
+# COMMAND: CHARGE, DISCHARGE, IDLE, or END
+# amps: current in Amperes
+# description: human-readable label
+#
+# Note: SIM_TIME_FACTOR=30 means each real second = 30 simulated seconds
+#       So "30 seconds" here = 15 simulated minutes
+
+30   CHARGE     50   Off-peak morning charge
+30   DISCHARGE  30   Morning load support
+10   DISCHARGE  110  High demand spike (triggers overcurrent trip)
+30   IDLE       0    Recovery after fault
+0    END        0    Simulation complete

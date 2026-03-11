@@ -1,31 +1,44 @@
-CC      = gcc
-CFLAGS  = -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -Iinclude
-LDFLAGS = -lpthread -lrt -lm
+# Makefile for small-bess-ems
+#
+# Usage:
+#   make        — build all programs
+#   make clean  — remove all built files
+#   ./supervisor — run the whole simulation
 
-PROGS = supervisor simulator scheduler protection logger dashboard
+CC     = gcc
+CFLAGS = -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -Iinclude
+LFLAGS = -lpthread -lrt -lm
 
-all: $(PROGS)
+# All programs to build
+PROGRAMS = supervisor simulator scheduler protection logger dashboard
 
+all: $(PROGRAMS)
+
+# Each program links its own .c file + needs headers
 supervisor:  src/supervisor.c  include/ipc_config.h include/bess_types.h
-	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) src/supervisor.c  -o supervisor  $(LFLAGS)
 
 simulator:   src/simulator.c   include/ipc_config.h include/bess_types.h
-	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) src/simulator.c   -o simulator   $(LFLAGS)
 
 scheduler:   src/scheduler.c   include/ipc_config.h include/bess_types.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) src/scheduler.c   -o scheduler
 
 protection:  src/protection.c  include/ipc_config.h include/bess_types.h
-	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) src/protection.c  -o protection  $(LFLAGS)
 
 logger:      src/logger.c      include/ipc_config.h include/bess_types.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) src/logger.c      -o logger
 
 dashboard:   src/dashboard.c   include/ipc_config.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) src/dashboard.c   -o dashboard
 
 clean:
-	rm -f $(PROGS) bess.log /tmp/bess_telem
-	ipcrm -a 2>/dev/null || true
+	rm -f $(PROGRAMS) bess.log
+	rm -f /tmp/bess_telem
+	# Clean up leftover IPC objects (if simulation crashed)
+	# These live in /dev/shm on Linux
+	rm -f /dev/shm/bess_shm
+	rm -f /dev/mqueue/bess_cmd
 
 .PHONY: all clean
